@@ -1,0 +1,69 @@
+pipeline {
+  agent any
+
+  stages {
+      stage('Build') {
+        steps {
+            echo 'Build the code using a build automation tool'
+            echo 'Tool used: Maven'
+        }
+      }
+      stage('Unit and Integration Tests') {
+        steps {
+            echo 'Run unit testing and integration testing'
+            echo 'Tool for unit test:Junit, for intergation test: Selenium'
+        }
+      }
+      stage('Code Analysis') {
+        steps {
+            echo 'Integrate a code analysis tool'
+            echo 'Tool used: Spotbugs'
+        }
+      }
+      stage('Security Scan') {
+        steps {
+            echo 'Perform a security scan'
+            echo 'Tool used: ShiftLeft'
+        }
+        post {
+          success {
+              echo 'Security Scan Successful.'
+              emailext to: 'susmita.supu@gmail.com', subject: 'Security Scan Successful', body: 'The security scan was successful. Logs attached.', attachmentsPattern: '**/*.log'
+          }
+          failure {
+            echo 'Security Scan Failed.'
+            emailext to: 'susmita.supu@gmail.com', subject: 'Security Scan Failed', body: 'The security scan failed. Logs attached.', attachmentsPattern: '**/*.log'
+          }
+        }
+      }
+      stage('Deploy to Staging') {
+        steps {
+            echo 'Deploy the application to a staging server'
+            echo 'Tool used: Kubernetes'
+        }
+      }
+      stage('Integration Tests on Staging') {
+        steps {
+            echo 'Run integration tests on the staging environment'
+            echo 'Tool used: Selenium'
+        }
+      }
+      stage('Deploy to Production') {
+        steps {
+            echo 'Deploy the application to a production server'
+            echo 'Tool used: CircleCI'
+        }
+      }
+  }
+
+  post {
+    success {
+        echo 'Pipeline Successful.'
+        emailext to: 'susmita.supu@gmail.com', subject: 'Jenkin pipeline Successful', body: 'The pipeline build was successful.', attachmentsPattern: '**/*.log'
+    }
+    failure {
+        echo 'Pipeline failed' 
+        emailext to: 'susmita.supu@gmail.com', subject: 'Jenkin pipeline Failed', body: 'The pipeline build was failed.', attachmentsPattern: '**/*.log'
+    }
+  }
+}
